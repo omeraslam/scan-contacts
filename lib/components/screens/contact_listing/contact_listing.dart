@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scan_contacts/components/utilities/colors.dart';
 import 'package:scan_contacts/components/utilities/constants.dart';
-import '../../header/contacts_header.dart';
-import '../../header/user_profile_header.dart';
+import '../header/contacts_header.dart';
+import '../header/user_profile_header.dart';
+import '../ocr_scanner/ocr_scanner.dart';
 
 class ContactListing extends StatefulWidget {
-  final _image;
-  final name;
-  ContactListing(this._image, this.name);
   @override
   State<StatefulWidget> createState() {
     return _ContactListing();
@@ -16,15 +14,20 @@ class ContactListing extends StatefulWidget {
 
 class _ContactListing extends State<ContactListing> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomBarWidget(
+        appBar: ContactsHeader(
           height: 120,
         ),
         body: Container(
           child: Column(
             children: [
-              UserProfile(widget._image, widget.name),
+              UserProfile(),
               Container(
                 child: Column(
                   children: [
@@ -32,7 +35,7 @@ class _ContactListing extends State<ContactListing> {
                       padding: EdgeInsets.only(top: 40.0, bottom: 10.0),
                       child: Image.asset('assets/icons/no_card.png'),
                     ),
-                    Text(no_card_added,
+                    Text(noCardAdded,
                         style: const TextStyle(
                             color: CommonColors.no_card_added,
                             fontWeight: FontWeight.w700,
@@ -43,7 +46,7 @@ class _ContactListing extends State<ContactListing> {
                     Padding(padding: EdgeInsets.only(top: 10.0)),
                     Opacity(
                       opacity: 0.4699999988079071,
-                      child: Text(tap_scan_button,
+                      child: Text(tapScanButton,
                           style: const TextStyle(
                               color: CommonColors.tap_scan_text,
                               fontWeight: FontWeight.w300,
@@ -62,6 +65,11 @@ class _ContactListing extends State<ContactListing> {
             elevation: 0.0,
             child: Image.asset('assets/icons/floating.png'),
             backgroundColor: CommonColors.listing_color,
-            onPressed: () {}));
+            onPressed: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (BuildContext context) {
+                return new OcrScanner();
+              }));
+            }));
   }
 }

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "320789276977",
+    "firebase_url": "https://scan-contacts.firebaseio.com",
+    "project_id": "scan-contacts",
+    "storage_bucket": "scan-contacts.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320789276977:android:76a5fb1f8d48d24833e810",
+        "android_client_info": {
+          "package_name": "com.example.scan_contacts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320789276977-81b28noj3gebqjikoaognlb31u0afbpp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR93FyM8eSDQAId5_lB_Pu02jnkxGCKOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320789276977-81b28noj3gebqjikoaognlb31u0afbpp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "320789276977-bd5q5h71q4477ot46ouqmdojtne415si.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.scanContacts"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

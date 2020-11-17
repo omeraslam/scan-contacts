@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../contact_listing/contact_listing.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../models/user_model.dart';
+import 'package:hive/hive.dart';
+import '../../utilities/constants.dart';
 
 class OnBoarding extends StatefulWidget {
   @override
@@ -13,10 +16,17 @@ class OnBoarding extends StatefulWidget {
 
 class _OnBoarding extends State<OnBoarding> {
   File _image;
-  String name = 'hira';
+  final nameController = TextEditingController();
+  final contactController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   _imgFromCamera() async {
     await Future.delayed(Duration(milliseconds: 500));
+    // ignore: deprecated_member_use
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
 
@@ -27,12 +37,26 @@ class _OnBoarding extends State<OnBoarding> {
 
   _imgFromGallery() async {
     await Future.delayed(Duration(milliseconds: 500));
+    // ignore: deprecated_member_use
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
       _image = image;
     });
+  }
+
+  void _storeOnboardingInfo() {
+    final userModel = UserModel(
+        photoUrl: _image,
+        userName: nameController.text.toString(),
+        contactNumber: contactController.text.toString());
+    final userBox = Hive.box('user');
+    userBox.add(userModel);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return new ContactListing();
+    }));
   }
 
   void _showPicker(context) {
@@ -45,14 +69,14 @@ class _OnBoarding extends State<OnBoarding> {
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
+                      title: new Text(photoLibrary),
                       onTap: () {
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+                    title: new Text(camera),
                     onTap: () {
                       _imgFromCamera();
                       Navigator.of(context).pop();
@@ -103,71 +127,70 @@ class _OnBoarding extends State<OnBoarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 30,
+        appBar: AppBar(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 30,
+              ),
+              _imageClicker(),
+              Padding(
+                padding: EdgeInsets.all(10.0),
+              ),
+              Text(
+                name,
+                textAlign: TextAlign.left,
+              ),
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.amber,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      hintText: namePlaceholder,
+                      contentPadding: const EdgeInsets.all(10.0)),
+                ),
+              ),
+              Text(phoneNumber),
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: TextField(
+                  controller: contactController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.amber,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      hintText: phoneNumberPlaceholder,
+                      contentPadding: const EdgeInsets.all(10.0)),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10.0),
+              ),
+              RaisedButton(
+                child: Text(next),
+                onPressed: () {
+                  this._storeOnboardingInfo();
+                },
+                color: Colors.blueGrey,
+                textColor: Colors.blue,
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                splashColor: Colors.grey,
+              ),
+            ],
           ),
-          _imageClicker(),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-          ),
-          Text(
-            'Name',
-            textAlign: TextAlign.left,
-          ),
-          Padding(
-            padding: EdgeInsets.all(20.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  hintText: 'Enter a Name',
-                  contentPadding: const EdgeInsets.all(10.0)),
-            ),
-          ),
-          Text('Phone Number'),
-          Padding(
-            padding: EdgeInsets.all(20.0),
-            child: TextField(
-              autofocus: true,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  hintText: 'Enter a Phone number',
-                  contentPadding: const EdgeInsets.all(10.0)),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-          ),
-          RaisedButton(
-            child: Text("Next"),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (BuildContext context) {
-                print(_image);
-                return new ContactListing(_image, name);
-              }));
-            },
-            color: Colors.blueGrey,
-            textColor: Colors.blue,
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            splashColor: Colors.grey,
-          )
-        ],
-      ),
-    );
+        ));
   }
 }
