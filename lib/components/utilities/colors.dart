@@ -11,4 +11,5 @@ class CommonColors {
   static const Color no_card_added = const Color(0xff06d59f);
   static const PrimaryColor = const Color(0xfff9f9f9);
   static const icon_color = const Color(0xff06d59f);
+  static const blue_color = const Color(0xff057af7);
 }

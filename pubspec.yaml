@@ -38,10 +38,11 @@ dependencies:
   provider: ^4.3.1
   path_provider: ^1.6.5
   hive_flutter: 0.3.1
-
-
-
-
+  carousel_slider: 2.3.1 
+  permission: 0.1.7
+  common_app_utils: 1.0.1
+  maps_launcher: 1.2.2+2
+  sticky_headers: ^0.1.8
 
 
 dev_dependencies:

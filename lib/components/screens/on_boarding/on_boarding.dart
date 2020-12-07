@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../contact_listing/contact_listing.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,12 +15,14 @@ class OnBoarding extends StatefulWidget {
 
 class _OnBoarding extends State<OnBoarding> {
   File _image;
-  final nameController = TextEditingController();
-  final contactController = TextEditingController();
+  TextEditingController nameController;
+  TextEditingController contactController;
 
   @override
   void initState() {
     super.initState();
+    nameController = TextEditingController();
+    contactController = TextEditingController();
   }
 
   _imgFromCamera() async {
@@ -46,17 +47,57 @@ class _OnBoarding extends State<OnBoarding> {
     });
   }
 
+  bool phoneValidations() {
+    if (contactController.text.toString().isEmpty) {
+      _showAlert(context, 'Phone number is empty');
+      return false;
+    } else if (contactController.text.toString().length < 11 ||
+        contactController.text.toString().length > 13) {
+      _showAlert(context, 'Phone number is incorrect');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool nameValidations() {
+    if (nameController.text.toString().isEmpty) {
+      _showAlert(context, 'Name is empty');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool imageValidations() {
+    if (_image.path.toString().isEmpty) {
+      _showAlert(context, 'Image is empty');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   void _storeOnboardingInfo() {
-    final userModel = UserModel(
-        photoUrl: _image,
-        userName: nameController.text.toString(),
-        contactNumber: contactController.text.toString());
-    final userBox = Hive.box('user');
-    userBox.add(userModel);
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return new ContactListing();
-    }));
+    if (phoneValidations() && nameValidations() && imageValidations()) {
+      final userModel = UserModel(
+          photoUrl: _image.path,
+          userName: nameController.text.toString(),
+          contactNumber: contactController.text.toString());
+      final userBox = Hive.box('user');
+      userBox.add(userModel);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) {
+        return new ContactListing();
+      }));
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    contactController.dispose();
+    super.dispose();
   }
 
   void _showPicker(context) {
@@ -146,6 +187,7 @@ class _OnBoarding extends State<OnBoarding> {
                 padding: EdgeInsets.all(20.0),
                 child: TextField(
                   controller: nameController,
+                  autofocus: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
@@ -192,5 +234,14 @@ class _OnBoarding extends State<OnBoarding> {
             ],
           ),
         ));
+  }
+
+  void _showAlert(BuildContext context, subString) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text("Alert"),
+              content: Text(subString),
+            ));
   }
 }
