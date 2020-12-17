@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:scan_contacts/components/models/contact_model.dart';
 import 'package:scan_contacts/components/utilities/colors.dart';
 import '../../utilities/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,13 +7,14 @@ import '../edit_contact/edit_contact.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
 class ContactDetails extends StatefulWidget {
-  final contact_image;
+  final contactImage;
   final name;
   final address;
-  final phone_number;
+  final phoneNumber;
   final email;
-  final company_name;
-  ContactDetails(this.contact_image,this.name, this.address, this.phone_number, this.email, this.company_name);
+  final companyName;
+  ContactDetails(this.contactImage, this.name, this.address, this.phoneNumber,
+      this.email, this.companyName);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -25,22 +24,26 @@ class ContactDetails extends StatefulWidget {
 
 class _ContactDetailsState extends State<ContactDetails> {
   _launchCaller(phone) async {
-    String url = "tel:${phone}";
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (phone != null) {
+      String url = "tel:$phone";
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
     } else {
-      throw 'Could not launch $url';
+      print('nothing');
     }
   }
 
   _launcherMessage(number) async {
     if (Platform.isAndroid) {
-      String uri = 'sms:+${number}?body=hello%20there';
+      String uri = 'sms:+$number?body=hello%20there';
       if (await canLaunch(uri)) {
         await launch(uri);
       }
     } else if (Platform.isIOS) {
-      String uri = 'sms:${number}?body=hello%20there';
+      String uri = 'sms:$number?body=hello%20there';
       if (await canLaunch(uri)) {
         await launch(uri);
       } else {
@@ -52,11 +55,8 @@ class _ContactDetailsState extends State<ContactDetails> {
   void _launchEmailSubmission(mail) async {
     final Uri params = Uri(
         scheme: 'mailto',
-        path: '${mail}',
-        queryParameters: {
-          'subject': 'Send Mail',
-          'body': 'Hi there'
-        });
+        path: '$mail',
+        queryParameters: {'subject': 'Send Mail', 'body': 'Hi there'});
     String url = params.toString();
     if (await canLaunch(url)) {
       await launch(url);
@@ -65,20 +65,21 @@ class _ContactDetailsState extends State<ContactDetails> {
     }
   }
 
-  void _launchMapsSubmission(user_address) async {
-    MapsLauncher.launchQuery(user_address);
-
+  void _launchMapsSubmission(userAddress) async {
+    MapsLauncher.launchQuery(userAddress);
   }
 
   navigateToNext() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
-      return new CarouselIndicator(widget.contact_image,widget.name, widget.address, widget.phone_number, widget.email, widget.company_name);
+      return new CarouselIndicator(widget.contactImage, widget.name,
+          widget.address, widget.phoneNumber, widget.email, widget.companyName);
     }));
   }
+
   @override
   Widget build(BuildContext context) {
-    var fileImage = File(widget.contact_image);
+    var fileImage = File(widget.contactImage);
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -97,7 +98,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                 padding: EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
                   onTap: () {
-                     this.navigateToNext();
+                    this.navigateToNext();
                   },
                   child: Center(
                     child: Text(
@@ -121,19 +122,18 @@ class _ContactDetailsState extends State<ContactDetails> {
                   child: Column(
                     children: [
                       SizedBox(height: 10.0),
-                      fileImage != null ?
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10.0),
-                        height: 200.0,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: FileImage(fileImage),
-                                fit: BoxFit.cover))
-                      ) :
-                      Container(
-                        child: Image.asset('assets/icons/no_card.png'),
-                      ),
+                      fileImage != null
+                          ? Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10.0),
+                              height: 200.0,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: FileImage(fileImage),
+                                      fit: BoxFit.cover)))
+                          : Container(
+                              child: Image.asset('assets/icons/no_card.png'),
+                            ),
                       SizedBox(height: 10.0),
                       Text(widget.name,
                           style: const TextStyle(
@@ -156,28 +156,36 @@ class _ContactDetailsState extends State<ContactDetails> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           GestureDetector(
-                            child: ImageIcon(AssetImage('assets/icons/phone.png'),
-                                size: 60, color: CommonColors.icon_color),
+                            child: ImageIcon(
+                                AssetImage('assets/icons/phone.png'),
+                                size: 60,
+                                color: CommonColors.icon_color),
                             onTap: () {
-                               ;
-                              this._launchCaller(widget.phone_number);
+                              ;
+                              this._launchCaller(widget.phoneNumber);
                             },
                           ),
                           GestureDetector(
-                            child: ImageIcon(AssetImage('assets/icons/message.png'),
-                                size: 60, color: CommonColors.icon_color),
+                            child: ImageIcon(
+                                AssetImage('assets/icons/message.png'),
+                                size: 60,
+                                color: CommonColors.icon_color),
                             onTap: () {
-                              this._launcherMessage(widget.phone_number);
+                              this._launcherMessage(widget.phoneNumber);
                             },
                           ),
                           GestureDetector(
-                            child: ImageIcon(AssetImage('assets/icons/video.png'),
-                                size: 60, color: CommonColors.icon_color),
+                            child: ImageIcon(
+                                AssetImage('assets/icons/video.png'),
+                                size: 60,
+                                color: CommonColors.icon_color),
                             onTap: () {},
                           ),
                           GestureDetector(
-                            child: ImageIcon(AssetImage('assets/icons/mail.png'),
-                                size: 60, color: CommonColors.icon_color),
+                            child: ImageIcon(
+                                AssetImage('assets/icons/mail.png'),
+                                size: 60,
+                                color: CommonColors.icon_color),
                             onTap: () {
                               this._launchEmailSubmission(widget.email);
                             },
@@ -249,7 +257,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                     ),
                     Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -282,11 +290,11 @@ class _ContactDetailsState extends State<ContactDetails> {
                     ),
                     Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.phone_number,
+                          Text(widget.phoneNumber,
                               style: const TextStyle(
                                   color: const Color(0xff000000),
                                   fontWeight: FontWeight.w400,
@@ -299,7 +307,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                     ),
                     Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -316,11 +324,11 @@ class _ContactDetailsState extends State<ContactDetails> {
                     ),
                     Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.company_name,
+                          Text(widget.companyName,
                               style: const TextStyle(
                                   color: const Color(0xff000000),
                                   fontWeight: FontWeight.w400,
@@ -335,10 +343,11 @@ class _ContactDetailsState extends State<ContactDetails> {
                     Container(
                         width: 375,
                         height: 0.5,
-                        decoration: BoxDecoration(color: const Color(0xffe4e4e4))),
+                        decoration:
+                            BoxDecoration(color: const Color(0xffe4e4e4))),
                     Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -355,7 +364,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                     ),
                     Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -375,17 +384,13 @@ class _ContactDetailsState extends State<ContactDetails> {
                         this._launchMapsSubmission(widget.address);
                       },
                       child: Center(
-                        child:Image.asset('assets/icons/static_map.png')
-                      ),
+                          child: Image.asset('assets/icons/static_map.png')),
                     )
-                    
                   ],
                 ),
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 }
-

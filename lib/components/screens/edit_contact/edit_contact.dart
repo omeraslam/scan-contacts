@@ -4,13 +4,14 @@ import '../../utilities/constants.dart';
 import '../../utilities/colors.dart';
 
 class CarouselIndicator extends StatefulWidget {
-  final contact_image;
+  final contactImage;
   final name;
   final address;
-  final phone_number;
+  final phoneNumber;
   final email;
-  final company_name;
-  CarouselIndicator(this.contact_image,this.name, this.address, this.phone_number, this.email, this.company_name);
+  final companyName;
+  CarouselIndicator(this.contactImage, this.name, this.address,
+      this.phoneNumber, this.email, this.companyName);
   @override
   State<StatefulWidget> createState() {
     return CarouselIndicatorState();
@@ -30,7 +31,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
   @override
   Widget build(BuildContext context) {
     List<String> listPaths = [
-      widget.contact_image,
+      widget.contactImage,
       'assets/icons/no_card.png',
     ];
     return Scaffold(
@@ -377,14 +378,12 @@ class CarouselImageView extends StatelessWidget {
   CarouselImageView(this.imgPath);
   @override
   Widget build(BuildContext context) {
-    return  Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+    return Container(
+        height: 334,
+        width: 191,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage(imgPath),
-                fit: BoxFit.fitWidth))
-    );
+                image: AssetImage(imgPath), fit: BoxFit.fitWidth)));
   }
 }
 
