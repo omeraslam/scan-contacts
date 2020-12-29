@@ -8,6 +8,12 @@
       "languageVersion": "2.2"
     },
     {
+      "name": "alphabet_list_scroll_view",
+      "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/alphabet_list_scroll_view-1.0.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.2"
+    },
+    {
       "name": "analyzer",
       "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/analyzer-0.39.17",
       "packageUri": "lib/",
@@ -494,6 +500,12 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "rxdart",
+      "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/rxdart-0.23.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.6"
+    },
+    {
       "name": "share",
       "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/share-0.6.5+4",
       "packageUri": "lib/",
@@ -632,6 +644,18 @@
       "languageVersion": "2.10"
     },
     {
+      "name": "vibration",
+      "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "vibration_web",
+      "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/vibration_web-1.6.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.7"
+    },
+    {
       "name": "watcher",
       "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/watcher-0.9.7+15",
       "packageUri": "lib/",
@@ -668,7 +692,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2020-12-08T07:01:41.815229Z",
+  "generated": "2020-12-18T06:31:06.994715Z",
   "generator": "pub",
   "generatorVersion": "2.10.0"
 }

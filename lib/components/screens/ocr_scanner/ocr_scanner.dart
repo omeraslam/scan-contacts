@@ -8,6 +8,7 @@ import 'package:scan_contacts/components/models/contact_model.dart';
 import 'package:scan_contacts/components/screens/contact_listing/contact_listing.dart';
 import '../../utilities/helper_methods.dart';
 import '../../utilities/string_extensions.dart';
+
 class OcrScanner extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -112,7 +113,7 @@ class _OcrScanner extends State<OcrScanner> {
           var emailValidation =
               emailRegex.allMatches(text).map((e) => e.group(0)).join(' ');
           List splitText = emailValidation.split('@');
-          if(splitText.toString().toLowerCase().contains('info')) {
+          if (splitText.toString().toLowerCase().contains('info')) {
             print('not found');
           } else {
             setState(() {
@@ -122,16 +123,17 @@ class _OcrScanner extends State<OcrScanner> {
           setState(() {
             email = emailValidation;
           });
-         var secondsplitText = splitText[1].toString();
-         if(secondsplitText.toLowerCase().contains('gmail') || secondsplitText.toLowerCase().contains('yahoo') ) {
-           print('No work detected');
-         } else {
-           List work = secondsplitText.split('.');
-           var workPlace = work[0];
-           setState(() {
-             companyName = workPlace;
-           });
-         }
+          var secondsplitText = splitText[1].toString();
+          if (secondsplitText.toLowerCase().contains('gmail') ||
+              secondsplitText.toLowerCase().contains('yahoo')) {
+            print('No work detected');
+          } else {
+            List work = secondsplitText.split('.');
+            var workPlace = work[0];
+            setState(() {
+              companyName = workPlace;
+            });
+          }
         }
       });
     });
@@ -149,7 +151,6 @@ class _OcrScanner extends State<OcrScanner> {
       email: email.toString(),
       address: address.toString(),
       mobileNumber: mobileNumber.toString(),
-
     );
     final cardContact = Hive.box('cardContact');
     final cardImageContact = Hive.box('cardImages');

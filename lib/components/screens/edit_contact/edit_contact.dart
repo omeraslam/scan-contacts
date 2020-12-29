@@ -180,20 +180,20 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
     return InkWell(
       onTap: () {
         if (add) {
-          firstNameList.insert(0, null);
-        } else
           firstNameList.removeAt(index);
+        } else
+          firstNameList.insert(0, null);
         setState(() {});
       },
       child: Container(
         width: 25,
         height: 25,
         decoration: BoxDecoration(
-          color: (add) ? Colors.green : Colors.red,
+          color: (add) ? Colors.red : Colors.green,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Icon(
-          (add) ? Icons.add : Icons.remove,
+          (add) ? Icons.remove : Icons.add,
           color: Colors.white,
         ),
       ),

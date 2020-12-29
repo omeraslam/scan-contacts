@@ -10,6 +10,7 @@ import 'package:scan_contacts/components/screens/contact_details/contact_details
 import 'package:scan_contacts/components/utilities/colors.dart';
 import 'package:scan_contacts/components/utilities/constants.dart';
 import '../ocr_scanner/ocr_scanner.dart';
+import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 
 class ContactListing extends StatefulWidget {
   @override
@@ -32,6 +33,11 @@ class _ContactListing extends State<ContactListing> {
     super.initState();
     searchController = TextEditingController();
     searchedList.addAll(fetchFromContactsBox);
+    searchedList.sort((a, b) => a.userName
+        .toString()
+        .toLowerCase()
+        .compareTo(b.userName.toString().toLowerCase()));
+    print(searchedList);
   }
 
   _addToFavourites(contact) {
@@ -53,10 +59,11 @@ class _ContactListing extends State<ContactListing> {
   }
 
   _filterSearchResults(String query) {
-    if(query.isNotEmpty) {
+    if (query.isNotEmpty) {
       setState(() {
         searchedList = fetchFromContactsBox
-            .where((string) => string.userName.toLowerCase().contains(query.toLowerCase()))
+            .where((string) =>
+                string.userName.toLowerCase().contains(query.toLowerCase()))
             .toList();
       });
       return;

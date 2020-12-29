@@ -15,6 +15,7 @@ MERGED from [:url_launcher] /Users/applesolutions1/Flutter/scan_contacts/build/u
 MERGED from [:firebase_ml_vision] /Users/applesolutions1/Flutter/scan_contacts/build/firebase_ml_vision/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:path_provider] /Users/applesolutions1/Flutter/scan_contacts/build/path_provider/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:share] /Users/applesolutions1/Flutter/scan_contacts/build/share/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-19:12
+MERGED from [:vibration] /Users/applesolutions1/Flutter/scan_contacts/build/vibration/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [:permission] /Users/applesolutions1/Flutter/scan_contacts/build/permission/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/applesolutions1/.gradle/caches/transforms-2/files-2.1/77a2f97f4180acca865bcaa51f4b21c5/play-services-maps-17.0.0/AndroidManifest.xml:17:1-38:12
 MERGED from [com.google.firebase:firebase-ml-vision:20.0.0] /Users/applesolutions1/.gradle/caches/transforms-2/files-2.1/cffd3a16cc522b8d52f3c31aa86ac430/jetified-firebase-ml-vision-20.0.0/AndroidManifest.xml:2:1-8:12
@@ -182,6 +183,8 @@ MERGED from [:path_provider] /Users/applesolutions1/Flutter/scan_contacts/build/
 MERGED from [:path_provider] /Users/applesolutions1/Flutter/scan_contacts/build/path_provider/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:share] /Users/applesolutions1/Flutter/scan_contacts/build/share/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:share] /Users/applesolutions1/Flutter/scan_contacts/build/share/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:vibration] /Users/applesolutions1/Flutter/scan_contacts/build/vibration/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:vibration] /Users/applesolutions1/Flutter/scan_contacts/build/vibration/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:permission] /Users/applesolutions1/Flutter/scan_contacts/build/permission/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:permission] /Users/applesolutions1/Flutter/scan_contacts/build/permission/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/applesolutions1/.gradle/caches/transforms-2/files-2.1/77a2f97f4180acca865bcaa51f4b21c5/play-services-maps-17.0.0/AndroidManifest.xml:20:5-44
@@ -304,6 +307,10 @@ ADDED from [:share] /Users/applesolutions1/Flutter/scan_contacts/build/share/int
 		ADDED from [:share] /Users/applesolutions1/Flutter/scan_contacts/build/share/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-37
 	android:name
 		ADDED from [:share] /Users/applesolutions1/Flutter/scan_contacts/build/share/intermediates/library_manifest/debug/AndroidManifest.xml:9:13-70
+uses-permission#android.permission.VIBRATE
+ADDED from [:vibration] /Users/applesolutions1/Flutter/scan_contacts/build/vibration/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-66
+	android:name
+		ADDED from [:vibration] /Users/applesolutions1/Flutter/scan_contacts/build/vibration/intermediates/library_manifest/debug/AndroidManifest.xml:7:22-63
 uses-permission#android.permission.ACCESS_NETWORK_STATE
 ADDED from [com.google.android.gms:play-services-maps:17.0.0] /Users/applesolutions1/.gradle/caches/transforms-2/files-2.1/77a2f97f4180acca865bcaa51f4b21c5/play-services-maps-17.0.0/AndroidManifest.xml:23:5-79
 MERGED from [com.google.firebase:firebase-iid:18.0.0] /Users/applesolutions1/.gradle/caches/transforms-2/files-2.1/6a2363dad822ca609fa6925cc0fa8a89/jetified-firebase-iid-18.0.0/AndroidManifest.xml:22:5-79
