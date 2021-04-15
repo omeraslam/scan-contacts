@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:scan_contacts/components/models/contact_favourites.dart';
-import 'package:scan_contacts/components/models/contact_images.dart';
-import 'package:scan_contacts/components/models/contact_model.dart';
 import 'package:scan_contacts/components/models/user_model.dart';
 import 'package:scan_contacts/components/screens/contact_details/contact_details.dart';
 import 'package:scan_contacts/components/utilities/colors.dart';
@@ -21,12 +19,11 @@ class ContactListing extends StatefulWidget {
 
 class _ContactListing extends State<ContactListing> {
   final contactBox = Hive.box('cardContact');
-  final favouriteContactsBox = Hive.box('cardFavourites');
-  List get fetchFromFavBox => favouriteContactsBox.values.toList();
   List get fetchFromContactsBox => contactBox.values.toList();
   var searchedList = List();
   int id;
   TextEditingController searchController;
+  String contactstring = "contacts";
 
   @override
   void initState() {
@@ -38,24 +35,6 @@ class _ContactListing extends State<ContactListing> {
         .toLowerCase()
         .compareTo(b.userName.toString().toLowerCase()));
     print(searchedList);
-  }
-
-  _addToFavourites(contact) {
-    final favouriteContact = ContactFavouritesModel(
-      frontImage: contact.frontImage,
-      userName: contact.userName,
-      companyName: contact.companyName,
-      email: contact.email,
-      address: contact.address,
-      mobileNumber: contact.mobileNumber,
-    );
-    favouriteContactsBox.add(favouriteContact);
-    print(favouriteContactsBox.values);
-    print('saved');
-  }
-
-  _deleteFromFavourites(contact) {
-    favouriteContactsBox.delete(contact._key);
   }
 
   _filterSearchResults(String query) {
@@ -88,7 +67,7 @@ class _ContactListing extends State<ContactListing> {
               floating: true,
               expandedHeight: MediaQuery.of(context).size.height * 0.5,
             ),
-            _buildListView()
+            _buildListView(contactstring)
           ],
         ),
         floatingActionButton: new FloatingActionButton(
@@ -202,118 +181,18 @@ class _ContactListing extends State<ContactListing> {
     );
   }
 
-  _buildListView() {
-    if (contactBox.values.isNotEmpty) {
-      return SliverList(
-          delegate:
-              SliverChildBuilderDelegate((BuildContext context, int index) {
-        final contact = searchedList[index];
-        final bool alreadySaved = fetchFromFavBox.contains(contact);
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: AssetImage('assets/icons/message.png'),
-          ),
-          title: Text(
-            contact.userName,
-            style: const TextStyle(
-                color: const Color(0xff010707),
-                fontWeight: FontWeight.w600,
-                fontFamily: "Lato",
-                fontStyle: FontStyle.normal,
-                fontSize: 15.0),
-          ),
-          subtitle: Text(
-            contact.mobileNumber.toString(),
-            style: const TextStyle(
-                color: const Color(0xff787878),
-                fontWeight: FontWeight.w400,
-                fontFamily: "Helvetica",
-                fontStyle: FontStyle.normal,
-                fontSize: 10.0),
-          ),
-          trailing: IconButton(
-              icon: alreadySaved ? Icon(Icons.star) : Icon(Icons.star_border),
-              color: alreadySaved ? Colors.red : null,
-              onPressed: () => {
-                    setState(() {
-                      if (alreadySaved) {
-                        _deleteFromFavourites(contact);
-                        print('removed');
-                      } else {
-                        _addToFavourites(contact);
-                      }
-                    })
-                  }),
-          onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (BuildContext context) {
-              return new ContactDetails(
-                  contact.frontImage,
-                  contact.userName,
-                  contact.address,
-                  contact.mobileNumber,
-                  contact.email,
-                  contact.companyName);
-            }));
-          },
-        );
-      }, childCount: searchedList.length));
-    } else {
-      return SliverList(
-          delegate:
-              SliverChildBuilderDelegate((BuildContext context, int index) {
-        return Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 40.0, bottom: 10.0),
-                child: Expanded(
-                  child: Image.asset('assets/icons/no_card.png'),
-                ),
-              ),
-              Text(noCardAdded,
-                  style: const TextStyle(
-                      color: CommonColors.no_card_added,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "Helvetica",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 20.0),
-                  textAlign: TextAlign.center),
-              Padding(padding: EdgeInsets.only(top: 10.0)),
-              Opacity(
-                opacity: 0.4699999988079071,
-                child: Text(tapScanButton,
-                    style: const TextStyle(
-                        color: CommonColors.tap_scan_text,
-                        fontWeight: FontWeight.w300,
-                        fontFamily: "Helvetica",
-                        fontStyle: FontStyle.normal,
-                        fontSize: 12.0),
-                    textAlign: TextAlign.center),
-              )
-            ],
-          ),
-        );
-      }, childCount: 1));
-    }
-  }
-
-  ListView _buildImageListView() {
-    final contactBox = Hive.box('cardContact');
-    if (contactBox != null) {
-      return ListView.builder(
-          itemCount: contactBox.length,
-          itemBuilder: (BuildContext context, int index) {
-            final image = contactBox.get(index) as ContactModel;
-            var file = File(image.frontImage);
-            return Container(
-                margin: EdgeInsets.symmetric(horizontal: 10.0),
-                height: 200.0,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: FileImage(file), fit: BoxFit.cover)));
-          });
+  _buildListView(contact) {
+    if (contact == 'contacts') {
+      if (contactBox.values.isNotEmpty) {
+        return DynamicListView('userContact', searchedList);
+      } else {
+        return DynamicListView('emptyContact', searchedList);
+      }
+    } else if (contact == "contactImage") {
+      if (contactBox.values.isNotEmpty) {
+        return DynamicListView('imagesContact', searchedList);
+      } else
+        return print('nothing');
     }
   }
 
@@ -400,7 +279,12 @@ class _ContactListing extends State<ContactListing> {
                                 'assets/icons/menu.png',
                                 height: 30,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                _buildListView('contacts');
+                                setState(() {
+                                  contactstring = "contacts";
+                                });
+                              },
                               alignment: Alignment.centerRight,
                               padding: EdgeInsets.all(0),
                             ),
@@ -423,20 +307,14 @@ class _ContactListing extends State<ContactListing> {
                           children: [
                             IconButton(
                               icon: Image.asset(
-                                'assets/icons/list_icons.png',
-                                height: 20,
-                              ),
-                              onPressed: () {},
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.all(0),
-                            ),
-                            IconButton(
-                              icon: Image.asset(
                                 'assets/icons/card.png',
                                 height: 30,
                               ),
                               onPressed: () {
-                                _buildImageListView();
+                                _buildListView('contactImage');
+                                setState(() {
+                                  contactstring = "contactImage";
+                                });
                               },
                               alignment: Alignment.centerRight,
                               padding: EdgeInsets.all(0),
@@ -453,5 +331,160 @@ class _ContactListing extends State<ContactListing> {
         ],
       ),
     );
+  }
+}
+
+class DynamicListView extends StatefulWidget {
+  String parameter;
+  List searchedList;
+
+  DynamicListView(this.parameter, this.searchedList);
+  @override
+  State<StatefulWidget> createState() {
+    return _DynamicListViewState();
+  }
+}
+
+class _DynamicListViewState extends State<DynamicListView> {
+  final favouriteContactsBox = Hive.box('cardFavourites');
+  List get fetchFromFavBox => favouriteContactsBox.values.toList();
+
+  _addToFavourites(contact, index) {
+    final favouriteContact = ContactFavouritesModel(
+        frontImage: contact.frontImage,
+        userName: contact.userName,
+        companyName: contact.companyName,
+        email: contact.email,
+        address: contact.address,
+        mobileNumber: contact.mobileNumber,
+        designation: contact.designations);
+    favouriteContactsBox.add(favouriteContact);
+    print(favouriteContactsBox.values);
+    print('saved');
+  }
+
+  _deleteFromFavourites(contact, index) {
+    favouriteContactsBox.delete(contact);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.parameter == 'userContact'
+        ? SliverList(
+            delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+            final contact = widget.searchedList[index];
+            final alreadySaved = fetchFromFavBox.map((e) => e.userName == contact.userName);
+            bool saved = fetchFromFavBox.contains(contact);
+            var fileImage = File(contact.frontImage);
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: FileImage(fileImage),
+              ),
+              title: Text(
+                contact.userName,
+                style: const TextStyle(
+                    color: const Color(0xff010707),
+                    fontWeight: FontWeight.w600,
+                    fontFamily: "Lato",
+                    fontStyle: FontStyle.normal,
+                    fontSize: 15.0),
+              ),
+              subtitle: Text(
+                contact.mobileNumber.toString(),
+                style: const TextStyle(
+                    color: const Color(0xff787878),
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "Helvetica",
+                    fontStyle: FontStyle.normal,
+                    fontSize: 10.0),
+              ),
+              trailing: IconButton(
+                  icon: alreadySaved == true? Icon(Icons.star) : Icon(Icons.star_border),
+                  color: alreadySaved == true? Colors.red : null,
+                  onPressed: () {
+                       setState(() {
+                         if (alreadySaved == true){
+                           _deleteFromFavourites(contact,index);
+                         }
+                         else {
+                         _addToFavourites(contact, index);
+                         }
+                       });
+                      }),
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return new ContactDetails(
+                      index,
+                      contact.frontImage,
+                      contact.userName,
+                      contact.address,
+                      contact.mobileNumber,
+                      contact.email,
+                      contact.companyName,
+                      contact.designations);
+                }));
+              },
+            );
+          }, childCount: widget.searchedList.length))
+        : widget.parameter == 'emptyContact'
+            ? SliverList(
+                delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                return Center(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 40.0, bottom: 10.0),
+                        child: Expanded(
+                          child: Image.asset('assets/icons/no_card.png'),
+                        ),
+                      ),
+                      Text(noCardAdded,
+                          style: const TextStyle(
+                              color: CommonColors.no_card_added,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Helvetica",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 20.0),
+                          textAlign: TextAlign.center),
+                      Padding(padding: EdgeInsets.only(top: 10.0)),
+                      Opacity(
+                        opacity: 0.4699999988079071,
+                        child: Text(tapScanButton,
+                            style: const TextStyle(
+                                color: CommonColors.tap_scan_text,
+                                fontWeight: FontWeight.w300,
+                                fontFamily: "Helvetica",
+                                fontStyle: FontStyle.normal,
+                                fontSize: 12.0),
+                            textAlign: TextAlign.center),
+                      )
+                    ],
+                  ),
+                );
+              }, childCount: 1))
+            : widget.parameter == "imagesContact"
+                ? SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                    final contact = widget.searchedList[index];
+                    var fileImage = File(contact.frontImage);
+                    return Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 10.0),
+                        height: 200.0,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: FileImage(fileImage),
+                                fit: BoxFit.cover)));
+
+                    //    ListTile(
+                    //   leading:
+                    // );
+                  }, childCount: widget.searchedList.length))
+                : "";
   }
 }

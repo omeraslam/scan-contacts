@@ -7,14 +7,16 @@ import '../edit_contact/edit_contact.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
 class ContactDetails extends StatefulWidget {
+  final userId;
   final contactImage;
   final name;
   final address;
   final phoneNumber;
   final email;
   final companyName;
-  ContactDetails(this.contactImage, this.name, this.address, this.phoneNumber,
-      this.email, this.companyName);
+  final designation;
+  ContactDetails(this.userId,this.contactImage, this.name, this.address, this.phoneNumber,
+      this.email, this.companyName, this.designation);
   @override
   State<StatefulWidget> createState() {
     return _ContactDetailsState();
@@ -71,7 +73,7 @@ class _ContactDetailsState extends State<ContactDetails> {
   navigateToNext() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
-      return new CarouselIndicator(widget.contactImage, widget.name,
+      return new CarouselIndicator(widget.userId,widget.contactImage, widget.name,
           widget.address, widget.phoneNumber, widget.email, widget.companyName);
     }));
   }
@@ -134,7 +136,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                               child: Image.asset('assets/icons/no_card.png'),
                             ),
                       SizedBox(height: 10.0),
-                      Text(widget.name,
+                      Text(widget.name != "null" ? widget.name: "N/A",
                           style: const TextStyle(
                               color: const Color(0xff010707),
                               fontWeight: FontWeight.w500,
@@ -142,14 +144,14 @@ class _ContactDetailsState extends State<ContactDetails> {
                               fontStyle: FontStyle.normal,
                               fontSize: 23.0),
                           textAlign: TextAlign.left),
-                      // Text("Design Studio",
-                      //     style: const TextStyle(
-                      //         color: const Color(0xff7a7a7c),
-                      //         fontWeight: FontWeight.w500,
-                      //         fontFamily: "Lato",
-                      //         fontStyle: FontStyle.normal,
-                      //         fontSize: 13.0),
-                      //     textAlign: TextAlign.left),
+                      Text(widget.designation != "null" ? widget.designation: "N/A",
+                          style: const TextStyle(
+                              color: const Color(0xff7a7a7c),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "Lato",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 13.0),
+                          textAlign: TextAlign.left),
                       SizedBox(height: 10.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -160,7 +162,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                                 size: 60,
                                 color: CommonColors.icon_color),
                             onTap: () {
-                              ;
+
                               this._launchCaller(widget.phoneNumber);
                             },
                           ),
@@ -260,7 +262,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.email,
+                          Text(widget.email != "null"? widget.email: "N/A" ,
                               style: const TextStyle(
                                   color: const Color(0xff000000),
                                   fontWeight: FontWeight.w400,
@@ -293,7 +295,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.phoneNumber,
+                          Text(widget.phoneNumber != "null"? widget.phoneNumber: "N/A",
                               style: const TextStyle(
                                   color: const Color(0xff000000),
                                   fontWeight: FontWeight.w400,
@@ -327,7 +329,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.companyName,
+                          Text(widget.companyName != "null"? widget.companyName: "N/A",
                               style: const TextStyle(
                                   color: const Color(0xff000000),
                                   fontWeight: FontWeight.w400,
@@ -367,7 +369,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.address,
+                          Text(widget.address != "null"? widget.address: "N/A",
                               style: const TextStyle(
                                   color: const Color(0xff343434),
                                   fontWeight: FontWeight.w400,

@@ -28,7 +28,6 @@ class ContactImagesModelAdapter extends TypeAdapter<ContactImagesModel> {
       ..writeByte(1)
       ..write(obj.backImage2);
   }
-
   @override
   // TODO: implement typeId
   int get typeId => 2;

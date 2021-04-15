@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:flutter/material.dart';
 import 'package:scan_contacts/components/models/contact_model.dart';
 import 'package:scan_contacts/components/models/user_model.dart';
+import 'package:scan_contacts/components/screens/contact_listing/contact_listing.dart';
 import 'components/models/contact_favourites.dart';
 import 'components/screens/on_boarding/on_boarding.dart';
 import 'components/utilities/colors.dart';
@@ -40,8 +41,13 @@ class _MyApp extends State<MyApp> {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) {
                 return Text(snapshot.error.toString());
-              } else
-                return OnBoarding();
+              } else {
+                final userBox = Hive.box('user');
+                if (userBox.values.isNotEmpty) {
+                  return ContactListing();
+                } else
+                  return OnBoarding();
+              }
             } else
               return Scaffold();
           }),
@@ -50,7 +56,6 @@ class _MyApp extends State<MyApp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Hive.openBox('cardContact');
     Hive.openBox('cardImages');

@@ -22,6 +22,8 @@ class ContactFavouritesModel extends HiveObject {
   final String mobileNumber;
   @HiveField(8)
   final String companyNumber;
+  @HiveField(9)
+  final String designation;
 
   ContactFavouritesModel({
     this.frontImage,
@@ -33,5 +35,6 @@ class ContactFavouritesModel extends HiveObject {
     this.address,
     this.mobileNumber,
     this.companyNumber,
+    this.designation
   });
 }

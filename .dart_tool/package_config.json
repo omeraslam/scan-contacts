@@ -314,6 +314,12 @@
       "languageVersion": "2.3"
     },
     {
+      "name": "image_cropper",
+      "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/image_cropper-1.3.1",
+      "packageUri": "lib/",
+      "languageVersion": "1.20"
+    },
+    {
       "name": "image_picker",
       "rootUri": "file:///Users/applesolutions1/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.6.7+12",
       "packageUri": "lib/",
@@ -692,7 +698,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2020-12-18T06:31:06.994715Z",
+  "generated": "2021-01-11T13:46:10.608976Z",
   "generator": "pub",
   "generatorVersion": "2.10.0"
 }

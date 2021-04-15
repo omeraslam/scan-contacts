@@ -24,13 +24,14 @@ class ContactFavouritesModelAdapter
       address: fields[6] as String,
       mobileNumber: fields[7] as String,
       companyNumber: fields[8] as String,
+      designation: fields[9] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactFavouritesModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.frontImage)
       ..writeByte(1)
@@ -48,10 +49,11 @@ class ContactFavouritesModelAdapter
       ..writeByte(7)
       ..write(obj.mobileNumber)
       ..writeByte(8)
-      ..write(obj.companyNumber);
+      ..write(obj.companyNumber)
+      ..writeByte(9)
+      ..write(obj.designation);
   }
-
   @override
   // TODO: implement typeId
-  int get typeId =>3;
+  int get typeId => 3;
 }

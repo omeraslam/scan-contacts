@@ -7,7 +7,7 @@ import 'package:scan_contacts/components/models/contact_images.dart';
 import 'package:scan_contacts/components/models/contact_model.dart';
 import 'package:scan_contacts/components/screens/contact_listing/contact_listing.dart';
 import '../../utilities/helper_methods.dart';
-import '../../utilities/string_extensions.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class OcrScanner extends StatefulWidget {
   @override
@@ -32,6 +32,7 @@ class _OcrScanner extends State<OcrScanner> {
   String address;
   String companyNumber;
   String mobileNumber;
+  String userDesignation;
 
   @override
   void initState() {
@@ -103,6 +104,20 @@ class _OcrScanner extends State<OcrScanner> {
           });
         }
       }
+      if(element.contains(designationRegex)) {
+        var designation = designationRegex.allMatches(element).map((e) => e.group(0)).join(' ');
+        print('DESIGNATION: '+ designation);
+        setState(() {
+          userDesignation = element;
+        });
+      }
+      if(element.contains(nameRegex)) {
+        var name = nameRegex.allMatches(element).map((e) => e.group(0)).join("");
+        print('NAME: '+ name);
+          setState(() {
+            userName = element;
+          });
+      }
     });
   }
 
@@ -116,9 +131,9 @@ class _OcrScanner extends State<OcrScanner> {
           if (splitText.toString().toLowerCase().contains('info')) {
             print('not found');
           } else {
-            setState(() {
-              userName = splitText[0];
-            });
+            // setState(() {
+            //   userName = splitText[0];
+            // });
           }
           setState(() {
             email = emailValidation;
@@ -144,27 +159,45 @@ class _OcrScanner extends State<OcrScanner> {
     final imageContact = ContactImagesModel(
       frontImage: pickedImage.path,
     );
-    final userContact = ContactModel(
-      frontImage: pickedImage.path,
-      userName: userName.toString(),
-      companyName: companyName.toString(),
-      email: email.toString(),
-      address: address.toString(),
-      mobileNumber: mobileNumber.toString(),
-    );
-    final cardContact = Hive.box('cardContact');
-    final cardImageContact = Hive.box('cardImages');
-    cardContact.add(userContact);
-    cardImageContact.add(imageContact);
-    print(cardContact.values);
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return new ContactListing();
-    }));
+    // if(userName == null || mobileNumber == null) {
+    // this._showAlert(context, "Name and phone number is not recognized.Please retake the picture");
+    // } else {
+      final userContact = ContactModel(
+          frontImage: pickedImage.path,
+          userName: userName.toString(),
+          companyName: companyName.toString(),
+          email: email.toString(),
+          address: address.toString(),
+          mobileNumber: mobileNumber.toString(),
+          designations: userDesignation.toString()
+      );
+      final cardContact = Hive.box('cardContact');
+      final cardImageContact = Hive.box('cardImages');
+      cardContact.add(userContact);
+      cardImageContact.add(imageContact);
+      print(cardContact.values);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) {
+        return new ContactListing();
+      }));
+    // }
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold();
+  }
+  void _showAlert(BuildContext context, subString) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Alert"),
+          content: Text(subString),
+          actions: [ new FlatButton(
+            child: const Text("Ok"),
+            onPressed:() { this.pickImage();},
+          ),],
+        ));
   }
 }

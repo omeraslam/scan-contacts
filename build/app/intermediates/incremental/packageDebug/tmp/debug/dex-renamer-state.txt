@@ -1,4 +1,4 @@
-#Tue Dec 22 16:41:32 PKT 2020
+#Tue Jan 12 14:35:06 PKT 2021
 base.0=/Users/applesolutions1/Flutter/scan_contacts/build/app/intermediates/dex/debug/mergeDexDebug/out/classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

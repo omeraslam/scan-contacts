@@ -1,16 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:scan_contacts/components/models/contact_model.dart';
+import 'package:scan_contacts/components/screens/contact_listing/contact_listing.dart';
 import '../../utilities/constants.dart';
 import '../../utilities/colors.dart';
+import 'package:hive/hive.dart';
 
 class CarouselIndicator extends StatefulWidget {
+  final userId;
   final contactImage;
   final name;
   final address;
   final phoneNumber;
   final email;
   final companyName;
-  CarouselIndicator(this.contactImage, this.name, this.address,
+  CarouselIndicator(this.userId,this.contactImage, this.name, this.address,
       this.phoneNumber, this.email, this.companyName);
   @override
   State<StatefulWidget> createState() {
@@ -23,10 +27,17 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
 
   final _formKey = GlobalKey<FormState>();
   static List<String> firstNameList = [null];
-  static List<String> lastNameList = [null];
+  static List<String> designationList = [null];
   static List<String> companyList = [null];
+  static List<String> mobileList = [null];
   static List<String> emailList = [null];
   static List<String> addressList = [null];
+  static String userFirstName = "";
+  static String designationName = "";
+  static String companyName = "";
+  static String mobileNumber = "";
+  static String userEmail = "";
+  static String address = "";
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +48,9 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
     return Scaffold(
         appBar: AppBar(
           leading: GestureDetector(
-              onTap: () {/* Write listener code here */},
+              onTap: () {
+                this.navigateToPreviousScreen();
+              },
               child: Center(
                 child: Text(
                   cancel,
@@ -54,9 +67,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
                 padding: EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
                   onTap: () {
-                    if (_formKey.currentState.validate()) {
-                      _formKey.currentState.save();
-                    }
+                    this.updatedUser();
                   },
                   child: Center(
                     child: Text(
@@ -119,30 +130,37 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
                     SizedBox(
                       height: 10,
                     ),
+                    Text("First Name:"),
                     ..._getFirstName(),
                     Container(
                         width: 375,
                         height: 0.5,
                         decoration:
                             BoxDecoration(color: const Color(0xffe4e4e4))),
-                    ..._getLastName(),
+                    Text("Designation:"),
+                    ..._getDesignation(),
                     Container(
                         width: 375,
                         height: 0.5,
                         decoration:
                             BoxDecoration(color: const Color(0xffe4e4e4))),
+                    Text("Company Name:"),
                     ..._getCompany(),
                     Container(
                         width: 375,
                         height: 0.5,
                         decoration:
                             BoxDecoration(color: const Color(0xffe4e4e4))),
+                    Text("Email:"),
                     ..._getEmail(),
+                    Text("Mobile Number:"),
+                    ..._getMobile(),
                     Container(
                         width: 375,
                         height: 0.5,
                         decoration:
                             BoxDecoration(color: const Color(0xffe4e4e4))),
+                    Text("Address:"),
                     ..._getAddress(),
                     Container(
                         width: 375,
@@ -157,6 +175,40 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
         ));
   }
 
+  navigateToPreviousScreen() {
+    Navigator.pop(context);
+  }
+
+  updatedUser() {
+    final user = ContactModel(
+        frontImage: widget.contactImage,
+        userName: firstNameList[0] != null
+            ? firstNameList[0].toString()
+            : widget.name,
+        companyName: companyList[0] != null
+            ? companyList[0].toString()
+            : widget.companyName,
+        email: emailList[0] != null
+            ? emailList[0].toString()
+            : widget.email,
+        address: addressList[0]!= null
+            ? addressList[0].toString()
+            : widget.address,
+        mobileNumber: mobileList[0] != null
+            ? mobileList[0].toString()
+            : widget.phoneNumber,
+        companyNumber: "",
+        designations:
+            designationList[0] != null ? designationList[0].toString() : ""
+    );
+    final cardContact = Hive.box('cardContact');
+    cardContact.putAt(widget.userId, user);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return new ContactListing();
+    }));
+  }
+
   List<Widget> _getFirstName() {
     List<Widget> firstNameTextFields = [];
     for (int i = 0; i < 1; i++) {
@@ -168,7 +220,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
             SizedBox(
               width: 10,
             ),
-            Expanded(child: DynamicTextFields(i, firstName)),
+            Expanded(child: DynamicTextFields(i, firstName, widget.name)),
           ],
         ),
       ));
@@ -180,52 +232,51 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
     return InkWell(
       onTap: () {
         if (add) {
-          firstNameList.removeAt(index);
-        } else
           firstNameList.insert(0, null);
+        } else
+          firstNameList.removeAt(index);
         setState(() {});
       },
       child: Container(
-        width: 25,
-        height: 25,
-        decoration: BoxDecoration(
-          color: (add) ? Colors.red : Colors.green,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Icon(
-          (add) ? Icons.remove : Icons.add,
-          color: Colors.white,
-        ),
-      ),
+          width: 25,
+          height: 25,
+          decoration: BoxDecoration(
+            color: (add) ? Colors.red : Colors.green,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Icon(
+            (add) ? Icons.remove : Icons.add,
+            color: Colors.white,
+          )),
     );
   }
 
-  List<Widget> _getLastName() {
-    List<Widget> lastNameTextFields = [];
-    for (int i = 0; i < lastNameList.length; i++) {
-      lastNameTextFields.add(Padding(
+  List<Widget> _getDesignation() {
+    List<Widget> designationTextFields = [];
+    for (int i = 0; i < 1; i++) {
+      designationTextFields.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
           children: [
-            _addLastNameRemoveButton(i == lastNameList.length - 1, i),
+            _addDesignationRemoveButton(i == designationList.length - 1, i),
             SizedBox(
               width: 10,
             ),
-            Expanded(child: DynamicTextFields(i, lastName)),
+            Expanded(child: DynamicTextFields(i, designation, "")),
           ],
         ),
       ));
     }
-    return lastNameTextFields;
+    return designationTextFields;
   }
 
-  Widget _addLastNameRemoveButton(bool add, int index) {
+  Widget _addDesignationRemoveButton(bool add, int index) {
     return InkWell(
       onTap: () {
         if (add) {
-          lastNameList.insert(0, null);
+          designationList.insert(0, null);
         } else
-          lastNameList.removeAt(index);
+          designationList.removeAt(index);
         setState(() {});
       },
       child: Container(
@@ -254,7 +305,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
             SizedBox(
               width: 10,
             ),
-            Expanded(child: DynamicTextFields(i, company)),
+            Expanded(child: DynamicTextFields(i, company, widget.companyName)),
           ],
         ),
       ));
@@ -286,6 +337,49 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
     );
   }
 
+  List<Widget> _getMobile() {
+    List<Widget> mobileTextFields = [];
+    for (int i = 0; i < mobileList.length; i++) {
+      mobileTextFields.add(Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        child: Row(
+          children: [
+            _addMobileRemoveButton(i == mobileList.length - 1, i),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(child: DynamicTextFields(i, mobile, widget.phoneNumber))
+          ],
+        ),
+      ));
+    }
+    return mobileTextFields;
+  }
+
+  Widget _addMobileRemoveButton(bool add, int index) {
+    return InkWell(
+      onTap: () {
+        if (add) {
+          emailList.insert(0, null);
+        } else
+          emailList.removeAt(index);
+        setState(() {});
+      },
+      child: Container(
+        width: 25,
+        height: 25,
+        decoration: BoxDecoration(
+          color: (add) ? Colors.green : Colors.red,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Icon(
+          (add) ? Icons.add : Icons.remove,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
   List<Widget> _getEmail() {
     List<Widget> emailTextFields = [];
     for (int i = 0; i < emailList.length; i++) {
@@ -297,7 +391,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
             SizedBox(
               width: 10,
             ),
-            Expanded(child: DynamicTextFields(i, email)),
+            Expanded(child: DynamicTextFields(i, email, widget.email)),
           ],
         ),
       ));
@@ -340,7 +434,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
             SizedBox(
               width: 10,
             ),
-            Expanded(child: DynamicTextFields(i, email)),
+            Expanded(child: DynamicTextFields(i, textAddress, widget.address)),
           ],
         ),
       ));
@@ -374,7 +468,7 @@ class CarouselIndicatorState extends State<CarouselIndicator> {
 }
 
 class CarouselImageView extends StatelessWidget {
-  String imgPath;
+  final String imgPath;
   CarouselImageView(this.imgPath);
   @override
   Widget build(BuildContext context) {
@@ -390,35 +484,39 @@ class CarouselImageView extends StatelessWidget {
 class DynamicTextFields extends StatefulWidget {
   final int index;
   final String parameter;
-  DynamicTextFields(this.index, this.parameter);
+  final String userDetails;
+  DynamicTextFields(this.index, this.parameter, this.userDetails);
   @override
   _DynamicTextFieldsState createState() => _DynamicTextFieldsState();
 }
 
 class _DynamicTextFieldsState extends State<DynamicTextFields> {
   TextEditingController _nameController;
-  TextEditingController _lastNameController;
+  TextEditingController _designationController;
   TextEditingController _companyController;
   TextEditingController _emailController;
   TextEditingController _addressController;
+  TextEditingController _mobileController;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    _lastNameController = TextEditingController();
+    _designationController = TextEditingController();
     _companyController = TextEditingController();
     _emailController = TextEditingController();
     _addressController = TextEditingController();
+    _mobileController = TextEditingController();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _lastNameController.dispose();
+    _designationController.dispose();
     _companyController.dispose();
     _emailController.dispose();
     _addressController.dispose();
+    _mobileController.dispose();
     super.dispose();
   }
 
@@ -426,36 +524,46 @@ class _DynamicTextFieldsState extends State<DynamicTextFields> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _nameController.text =
-          CarouselIndicatorState.firstNameList[widget.index] ?? '';
-      _lastNameController.text =
-          CarouselIndicatorState.lastNameList[widget.index] ?? '';
+          CarouselIndicatorState.firstNameList[widget.index] ??
+          widget.userDetails;
+      _designationController.text =
+          CarouselIndicatorState.designationList[widget.index] ??
+              widget.userDetails;
       _companyController.text =
-          CarouselIndicatorState.companyList[widget.index] ?? '';
+          CarouselIndicatorState.companyList[widget.index] ??
+              widget.userDetails;
       _addressController.text =
-          CarouselIndicatorState.addressList[widget.index] ?? '';
+          CarouselIndicatorState.addressList[widget.index] ??
+              widget.userDetails;
       _emailController.text =
-          CarouselIndicatorState.emailList[widget.index] ?? '';
+          CarouselIndicatorState.emailList[widget.index] ??
+              widget.userDetails;
+      _mobileController.text =
+          CarouselIndicatorState.mobileList[widget.index] ??
+              widget.userDetails;
     });
 
     return widget.parameter == 'firstName'
         ? TextFormField(
             controller: _nameController,
-            onChanged: (v) =>
-                CarouselIndicatorState.firstNameList[widget.index] = v,
+            onChanged: (v) => {
+              CarouselIndicatorState.firstNameList[widget.index] = _nameController.text,
+            },
             decoration: InputDecoration.collapsed(
-                hintText: 'add firstname', border: InputBorder.none),
+                hintText: 'add first name', border: InputBorder.none),
             validator: (v) {
               if (v.trim().isEmpty) return 'Please enter something';
               return null;
             },
           )
-        : widget.parameter == 'lastName'
+        : widget.parameter == 'designation'
             ? TextFormField(
-                controller: _lastNameController,
-                onChanged: (v) =>
-                    CarouselIndicatorState.lastNameList[widget.index] = v,
+                controller: _designationController,
+                onChanged: (v) => {
+                   CarouselIndicatorState.designationList[widget.index] = _designationController.text,
+                },
                 decoration: InputDecoration.collapsed(
-                    hintText: 'add lastName', border: InputBorder.none),
+                    hintText: 'add designation', border: InputBorder.none),
                 validator: (v) {
                   if (v.trim().isEmpty) return 'Please enter something';
                   return null;
@@ -465,7 +573,7 @@ class _DynamicTextFieldsState extends State<DynamicTextFields> {
                 ? TextFormField(
                     controller: _companyController,
                     onChanged: (v) =>
-                        CarouselIndicatorState.companyList[widget.index] = v,
+                        CarouselIndicatorState.companyList[widget.index] = _companyController.text,
                     decoration: InputDecoration.collapsed(
                         hintText: 'add company', border: InputBorder.none),
                     validator: (v) {
@@ -473,25 +581,25 @@ class _DynamicTextFieldsState extends State<DynamicTextFields> {
                       return null;
                     },
                   )
-                : widget.parameter == 'email'
+                : widget.parameter == 'mobile'
                     ? TextFormField(
-                        controller: _emailController,
+                        controller: _mobileController,
                         onChanged: (v) =>
-                            CarouselIndicatorState.emailList[widget.index] = v,
+                            CarouselIndicatorState.emailList[widget.index] = _mobileController.text,
                         decoration: InputDecoration.collapsed(
-                            hintText: 'add email', border: InputBorder.none),
+                            hintText: 'add mobile', border: InputBorder.none),
                         validator: (v) {
                           if (v.trim().isEmpty) return 'Please enter something';
                           return null;
                         },
                       )
-                    : widget.parameter == 'address'
+                    : widget.parameter == 'email'
                         ? TextFormField(
-                            controller: _addressController,
+                            controller: _emailController,
                             onChanged: (v) => CarouselIndicatorState
-                                .addressList[widget.index] = v,
+                                .emailList[widget.index] = _emailController.text ,
                             decoration: InputDecoration.collapsed(
-                                hintText: 'add address',
+                                hintText: 'add email',
                                 border: InputBorder.none),
                             validator: (v) {
                               if (v.trim().isEmpty)
@@ -499,6 +607,21 @@ class _DynamicTextFieldsState extends State<DynamicTextFields> {
                               return null;
                             },
                           )
-                        : '';
+                        : widget.parameter == 'address'
+                            ? TextFormField(
+                                controller: _addressController,
+                                maxLines: 8,
+                                onChanged: (v) => CarouselIndicatorState
+                                    .addressList[widget.index] = _addressController.text,
+                                decoration: InputDecoration.collapsed(
+                                    hintText: 'add address',
+                                    border: InputBorder.none),
+                                validator: (v) {
+                                  if (v.trim().isEmpty)
+                                    return 'Please enter something';
+                                  return null;
+                                },
+                              )
+                            : '';
   }
 }
